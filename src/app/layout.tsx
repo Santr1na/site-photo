@@ -1,31 +1,31 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Manrope } from "next/font/google";
+import { Golos_Text, Unbounded } from "next/font/google";
 import { Providers } from "@/components/providers";
-import { ScrollProgress, SiteHeader } from "@/components/site-header";
+import { SiteFooter } from "@/components/site-footer";
+import { SiteHeader } from "@/components/site-header";
 import "./globals.css";
 
-const sans = Manrope({
+const sans = Golos_Text({
   subsets: ["latin", "cyrillic"],
   weight: ["400", "500", "600", "700"],
-  variable: "--font-manrope",
+  variable: "--font-golos",
   display: "swap",
 });
 
-const display = Cormorant_Garamond({
+const display = Unbounded({
   subsets: ["latin", "cyrillic"],
-  weight: ["500", "600"],
-  style: ["normal", "italic"],
-  variable: "--font-cormorant",
+  weight: ["400", "500", "600"],
+  variable: "--font-unbounded",
   display: "swap",
 });
 
 export const metadata: Metadata = {
   title: {
-    default: "NORDA — бюро личного позиционирования",
-    template: "%s — NORDA",
+    default: "Пример сайта-визитки — Мария Орлова",
+    template: "%s — образец визитки",
   },
   description:
-    "NORDA помогает экспертам и основателям найти профессиональную позицию: формулировку, по которой их выбирают и не путают с рынком. Диагностика «Профиль эксперта».",
+    "Образец сайта-визитки частного фотографа: имя, город, услуги с ценами, контакт и короткий опрос из четырёх вопросов.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -34,17 +34,17 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="ru"
       className={`${sans.variable} ${display.variable} h-full antialiased`}
     >
-      <body className="min-h-full bg-ivory text-ink">
+      <body className="min-h-full bg-paper text-ink">
         <Providers>
           <a
             href="#content"
-            className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:bg-ivory focus:px-4 focus:py-2"
+            className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:rounded-lg focus:bg-white focus:px-4 focus:py-2"
           >
             К содержанию
           </a>
-          <ScrollProgress />
           <SiteHeader />
           {children}
+          <SiteFooter />
         </Providers>
       </body>
     </html>

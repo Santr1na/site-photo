@@ -2,15 +2,15 @@ import type { Metadata } from "next";
 import { Quiz } from "@/components/quiz/quiz";
 
 export const metadata: Metadata = {
-  title: "Профиль эксперта",
+  title: "Короткий опрос",
   description:
-    "Диагностика NORDA: семь вопросов и один из четырёх архетипов — Стратег, Визионер, Наставник или Искатель — с конкретным следующим шагом.",
+    "Четыре вопроса образца сайта-визитки: какой формат съёмки ближе и что делать дальше. Ответы считаются в браузере.",
 };
 
 export default function QuizPage() {
   return (
-    <div id="content">
+    <main id="content" className="min-h-[70svh]">
       <Quiz />
-    </div>
+    </main>
   );
 }

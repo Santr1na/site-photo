@@ -1,34 +1,23 @@
 "use client";
 
-import { CtaLink } from "@/components/cta-link";
 import { Button } from "@/components/ui/button";
-import {
-  archetypeOrder,
-  archetypes,
-  questions,
-  scoreQuiz,
-  type ArchetypeId,
-} from "@/lib/quiz";
+import { formatOrder, services, type FormatId } from "@/lib/card";
+import { questions, resultText, scoreQuiz } from "@/lib/quiz";
 import { cn } from "cn";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { ArrowLeft } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { ArrowLeft, RotateCcw } from "lucide-react";
+import Link from "next/link";
+import { useEffect, useMemo, useRef, useState, type RefObject } from "react";
 
-const letters = ["А", "Б", "В", "Г"] as const;
+const letters = ["А", "Б", "В"] as const;
 const ease = [0.22, 1, 0.36, 1] as const;
-
-type Phase = "intro" | "quiz" | "scoring" | "result";
-
-function pad(value: number) {
-  return String(value).padStart(2, "0");
-}
 
 export function Quiz() {
   const reduce = useReducedMotion();
-  const [phase, setPhase] = useState<Phase>("intro");
   const [index, setIndex] = useState(0);
-  const [answers, setAnswers] = useState<ArchetypeId[]>([]);
+  const [answers, setAnswers] = useState<FormatId[]>([]);
   const [pending, setPending] = useState<string | null>(null);
+  const [done, setDone] = useState(false);
   const timer = useRef<number | null>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
   const indexRef = useRef(index);
@@ -44,17 +33,14 @@ export function Quiz() {
   }, []);
 
   useEffect(() => {
-    if (phase === "intro") return;
-    const timeout = window.setTimeout(() => {
-      headingRef.current?.focus();
-    }, reduce ? 0 : 480);
+    const timeout = window.setTimeout(() => headingRef.current?.focus(), reduce ? 0 : 280);
     return () => window.clearTimeout(timeout);
-  }, [phase, index, reduce]);
+  }, [index, done, reduce]);
 
   const question = questions[index];
-  const result = useMemo(
-    () => (answers.length === questions.length ? scoreQuiz(answers) : null),
-    [answers],
+  const score = useMemo(
+    () => (done && answers.length === questions.length ? scoreQuiz(answers) : null),
+    [answers, done],
   );
 
   function clearTimer() {
@@ -64,393 +50,252 @@ export function Quiz() {
     }
   }
 
-  function start() {
-    clearTimer();
-    setAnswers([]);
-    setIndex(0);
-    setPending(null);
-    setPhase("quiz");
-  }
-
   function restart() {
     clearTimer();
     setAnswers([]);
     setIndex(0);
     setPending(null);
-    setPhase("intro");
+    setDone(false);
   }
 
   function back() {
     clearTimer();
     setPending(null);
+    setDone(false);
     setIndex((current) => Math.max(0, current - 1));
   }
 
-  function choose(optionId: string, archetype: ArchetypeId) {
+  function choose(optionId: string, format: FormatId) {
     if (pending) return;
     clearTimer();
     const questionIndex = indexRef.current;
     setPending(optionId);
     setAnswers((prev) => {
-      const next = [...prev];
-      next[questionIndex] = archetype;
+      const next = prev.slice(0, questionIndex);
+      next[questionIndex] = format;
       return next;
     });
-    const delay = reduce ? 0 : 320;
+
     timer.current = window.setTimeout(() => {
       setPending(null);
       if (questionIndex >= questions.length - 1) {
-        setPhase("scoring");
-        timer.current = window.setTimeout(() => setPhase("result"), reduce ? 0 : 720);
+        setDone(true);
         return;
       }
       setIndex(questionIndex + 1);
-    }, delay);
+    }, reduce ? 0 : 280);
   }
 
-  const progress =
-    phase === "intro" ? 0 : phase === "quiz" ? (index + 1) / questions.length : 1;
-
-  const motionProps = reduce
-    ? { initial: false as const }
-    : {
-        initial: { opacity: 0, y: 22 },
-        animate: { opacity: 1, y: 0 },
-        exit: { opacity: 0, y: -16 },
-        transition: { duration: 0.45, ease },
-      };
+  const step = done ? questions.length : index + 1;
 
   return (
-    <main className="min-h-[100svh] bg-ivory text-ink">
-      {phase !== "intro" ? (
-        <div
-          className="fixed inset-x-0 top-0 z-[70] h-[3px] bg-ink/10"
-          role="progressbar"
-          aria-valuemin={1}
-          aria-valuemax={questions.length}
-          aria-valuenow={phase === "quiz" ? index + 1 : questions.length}
-          aria-label="Прогресс диагностики"
-        >
-          <motion.div
-            className="h-full origin-left bg-cinnabar"
-            initial={false}
-            animate={{ scaleX: progress }}
-            transition={
-              reduce ? { duration: 0 } : { type: "spring", stiffness: 140, damping: 24 }
-            }
+    <div className="mx-auto flex w-full max-w-5xl flex-col px-4 py-6 md:px-6 md:py-10">
+      <div
+        className="mb-6 flex gap-1.5"
+        role="progressbar"
+        aria-valuemin={1}
+        aria-valuemax={questions.length}
+        aria-valuenow={step}
+        aria-label="Прогресс опроса"
+      >
+        {questions.map((item, itemIndex) => (
+          <span
+            key={item.id}
+            className={cn(
+              "h-1.5 flex-1 rounded-full bg-ink/10 transition-colors duration-300 motion-reduce:transition-none",
+              itemIndex < step && "bg-pine",
+            )}
           />
-        </div>
-      ) : null}
+        ))}
+      </div>
 
-      <div className="mx-auto flex min-h-[100svh] w-full max-w-6xl flex-col px-5 pt-24 pb-16 md:px-10 md:pt-28">
-        <AnimatePresence mode="wait">
-          {phase === "intro" ? (
-            <motion.section key="intro" {...motionProps} className="flex flex-1 flex-col">
-              <p className="text-[0.72rem] font-medium tracking-[0.22em] uppercase text-cinnabar">
-                Диагностика NORDA
-              </p>
-              <h1 className="mt-5 max-w-4xl font-display text-[clamp(3.4rem,8vw,6.5rem)] leading-[0.88] font-medium tracking-[-0.035em]">
-                Профиль
-                <br />
-                <span className="italic">эксперта</span>
-              </h1>
-              <p className="mt-8 max-w-xl text-base leading-relaxed text-stone md:text-lg">
-                Семь вопросов о том, как вы думаете, говорите и выбираете работу.
-                Это не тест личности. Это черновик позиции: один из четырёх
-                архетипов и конкретный следующий шаг.
-              </p>
+      <p className="text-sm text-stone">
+        {done
+          ? "Короткий опрос · готово"
+          : `Короткий опрос · вопрос ${step} из ${questions.length}`}
+      </p>
 
-              <ul className="mt-12 grid grid-cols-2 gap-px bg-ink/10 md:grid-cols-4">
-                {archetypeOrder.map((id) => {
-                  const archetype = archetypes[id];
-                  return (
-                    <li key={id} className="bg-ivory px-4 py-5">
-                      <p className="font-display text-2xl text-cinnabar italic">
-                        {archetype.index}
-                      </p>
-                      <p className="mt-3 font-display text-2xl leading-none font-medium md:text-3xl">
-                        {archetype.name}
-                      </p>
-                    </li>
-                  );
-                })}
-              </ul>
-
-              <div className="mt-12 flex flex-col items-start gap-4">
-                <Button
-                  className="h-12 px-6 text-[0.72rem] font-semibold tracking-[0.16em] uppercase"
-                  onClick={start}
+      <AnimatePresence mode="wait">
+        {!done && question ? (
+          <motion.div
+            key={question.id}
+            initial={reduce ? false : { opacity: 0, x: 24 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={reduce ? undefined : { opacity: 0, x: -20 }}
+            transition={{ duration: 0.35, ease }}
+            className="mt-4"
+          >
+            <div className="grid items-start gap-6 lg:grid-cols-12 lg:gap-10">
+              <div className="lg:col-span-5">
+                <h1
+                  ref={headingRef}
+                  tabIndex={-1}
+                  className="font-display text-[clamp(1.6rem,3vw,2.4rem)] leading-[1.15] font-medium tracking-[-0.03em] outline-none"
                 >
-                  Начать
-                </Button>
-                <p className="text-sm text-stone">
-                  Около четырёх минут. Можно вернуться к предыдущему вопросу.
+                  {question.prompt}
+                </h1>
+                <p className="mt-3 text-sm leading-relaxed text-stone">
+                  Один ответ. Его можно сменить, вернувшись назад.
                 </p>
-              </div>
-            </motion.section>
-          ) : null}
-
-          {phase === "quiz" && question ? (
-            <motion.section
-              key={question.id}
-              {...motionProps}
-              className="flex flex-1 flex-col justify-center"
-              aria-live="polite"
-            >
-              <div className="grid items-start gap-8 lg:grid-cols-12 lg:gap-12">
-                <div className="lg:col-span-5">
-                  <p className="text-[0.72rem] font-medium tracking-[0.2em] uppercase text-cinnabar">
-                    Вопрос {pad(index + 1)}
-                    <span className="text-stone"> / {pad(questions.length)}</span>
-                  </p>
-                  <h1
-                    ref={headingRef}
-                    tabIndex={-1}
-                    className="mt-4 font-display text-[clamp(2rem,4vw,3.5rem)] leading-[1.02] font-medium tracking-[-0.03em] outline-none"
+                {index > 0 ? (
+                  <Button
+                    variant="ghost"
+                    className="mt-4 h-11 px-3 text-base"
+                    onClick={back}
+                    disabled={pending !== null}
                   >
-                    {question.prompt}
-                  </h1>
-                  {index > 0 ? (
-                    <Button
-                      variant="ghost"
-                      className="mt-8 h-11 px-0 text-[0.72rem] font-semibold tracking-[0.16em] uppercase hover:bg-transparent"
-                      onClick={back}
-                      disabled={pending !== null}
-                    >
-                      <ArrowLeft />
-                      Назад
-                    </Button>
-                  ) : (
-                    <p className="mt-8 text-sm text-stone">
-                      Выберите ответ — он ближе к одному из четырёх профилей.
-                    </p>
-                  )}
-                </div>
+                    <ArrowLeft />
+                    Назад
+                  </Button>
+                ) : (
+                  <Link
+                    href="/"
+                    className="mt-4 inline-flex h-11 items-center gap-2 rounded-xl px-3 text-base text-stone hover:text-ink"
+                  >
+                    <ArrowLeft className="size-4" aria-hidden />
+                    К карточке
+                  </Link>
+                )}
+              </div>
 
-                <div className="flex flex-col gap-3 lg:col-span-7">
-                  {question.options.map((option, optionIndex) => {
-                    const selected =
-                      pending === option.id ||
-                      (pending === null && answers[index] === option.archetype);
-                    return (
-                      <motion.div
-                        key={option.id}
-                        initial={reduce ? false : { opacity: 0, y: 14 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: reduce ? 0 : 0.05 * optionIndex, duration: 0.35, ease }}
+              <div className="flex flex-col gap-3 lg:col-span-7" role="group" aria-label="Варианты ответа">
+                {question.options.map((option, optionIndex) => {
+                  const selected = pending === option.id || (pending === null && answers[index] === option.format && answers.length > index);
+                  return (
+                    <motion.div
+                      key={option.id}
+                      initial={reduce ? false : { opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: reduce ? 0 : 0.05 * optionIndex, duration: 0.3, ease }}
+                    >
+                      <Button
+                        variant="outline"
+                        aria-pressed={selected}
+                        disabled={pending !== null && pending !== option.id}
+                        onClick={() => choose(option.id, option.format)}
+                        className={cn(
+                          "h-auto min-h-[4.75rem] w-full items-center justify-start gap-4 rounded-2xl bg-white px-4 py-4 text-left text-base font-normal whitespace-normal hover:border-pine hover:bg-accent md:min-h-[5.25rem] md:px-5 md:text-lg",
+                          selected &&
+                            "border-pine bg-pine text-white hover:border-pine hover:bg-pine hover:text-white",
+                        )}
                       >
-                        <Button
-                          variant="outline"
-                          aria-pressed={selected}
-                          disabled={pending !== null && pending !== option.id}
-                          onClick={() => choose(option.id, option.archetype)}
+                        <span
                           className={cn(
-                            "h-auto min-h-[5.25rem] w-full items-start justify-start gap-4 px-4 py-4 text-left text-base font-normal whitespace-normal hover:border-ink hover:bg-ink hover:text-ivory md:gap-5 md:px-5 md:py-5 md:text-lg",
-                            selected &&
-                              "border-cinnabar bg-cinnabar text-ink hover:border-cinnabar hover:bg-cinnabar hover:text-ink",
+                            "flex size-10 shrink-0 items-center justify-center rounded-xl bg-paper font-display text-sm text-ink",
+                            selected && "bg-white/15 text-white",
                           )}
                         >
-                          <span
-                            className={cn(
-                              "flex size-11 shrink-0 items-center justify-center border border-current/25 font-display text-2xl",
-                              selected && "border-ink/30",
-                            )}
-                          >
-                            {letters[optionIndex]}
-                          </span>
-                          <span className="pt-2 leading-snug">{option.label}</span>
-                        </Button>
-                      </motion.div>
-                    );
-                  })}
-                </div>
+                          {letters[optionIndex]}
+                        </span>
+                        <span className="leading-snug">{option.label}</span>
+                      </Button>
+                    </motion.div>
+                  );
+                })}
               </div>
-            </motion.section>
-          ) : null}
+            </div>
+          </motion.div>
+        ) : null}
 
-          {phase === "scoring" ? (
-            <motion.section
-              key="scoring"
-              {...motionProps}
-              className="flex flex-1 flex-col justify-center"
-            >
-              <p className="text-[0.72rem] font-medium tracking-[0.22em] uppercase text-cinnabar">
-                Считаем профиль
-              </p>
-              <h1
-                ref={headingRef}
-                tabIndex={-1}
-                className="mt-4 max-w-xl font-display text-5xl leading-[0.95] font-medium tracking-[-0.03em] outline-none md:text-7xl"
-              >
-                Собираем ответы в одну линию.
-              </h1>
-              <div className="mt-10 h-px w-full max-w-md bg-ink/15">
-                <motion.div
-                  className="h-px origin-left bg-cinnabar"
-                  initial={{ scaleX: 0 }}
-                  animate={{ scaleX: 1 }}
-                  transition={{ duration: reduce ? 0 : 0.75, ease: "easeInOut" }}
-                />
-              </div>
-            </motion.section>
-          ) : null}
+        {done && score ? (
+          <Result key="result" answers={answers} onRestart={restart} headingRef={headingRef} />
+        ) : null}
 
-          {phase === "result" && result ? (
-            <motion.section key="result" {...motionProps} className="flex flex-1 flex-col">
-              <ResultView headingRef={headingRef} answers={answers} onRestart={restart} />
-            </motion.section>
-          ) : null}
-
-          {phase === "result" && !result ? (
-            <motion.section key="incomplete" {...motionProps} className="flex flex-1 flex-col justify-center">
-              <h1
-                ref={headingRef}
-                tabIndex={-1}
-                className="font-display text-5xl font-medium outline-none"
-              >
-                Не хватает ответов.
-              </h1>
-              <p className="mt-4 max-w-md text-stone">
-                Профиль собирается из всех семи вопросов. Вернитесь и дойдите до конца.
-              </p>
-              <Button
-                className="mt-8 h-12 px-6 text-[0.72rem] font-semibold tracking-[0.16em] uppercase"
-                onClick={start}
-              >
-                Начать сначала
-              </Button>
-            </motion.section>
-          ) : null}
-        </AnimatePresence>
-      </div>
-    </main>
+        {done && !score ? (
+          <motion.div key="incomplete" className="mt-6">
+            <h1 ref={headingRef} tabIndex={-1} className="font-display text-3xl font-medium outline-none">
+              Не хватает ответов.
+            </h1>
+            <p className="mt-3 text-stone">Опрос собирается из всех четырёх вопросов.</p>
+            <Button className="mt-6 h-12 rounded-xl px-5 text-base" onClick={restart}>
+              Начать сначала
+            </Button>
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
+    </div>
   );
 }
 
-function ResultView({
-  headingRef,
+function Result({
   answers,
   onRestart,
+  headingRef,
 }: {
-  headingRef: React.RefObject<HTMLHeadingElement | null>;
-  answers: ArchetypeId[];
+  answers: FormatId[];
   onRestart: () => void;
+  headingRef: RefObject<HTMLHeadingElement | null>;
 }) {
   const reduce = useReducedMotion();
   const score = scoreQuiz(answers);
-  const archetype = archetypes[score.winner];
+  const service = services[score.winner];
+  const text = resultText(score);
 
   return (
-    <>
-      <p className="text-[0.72rem] font-medium tracking-[0.22em] uppercase text-cinnabar">
-        Архетип {archetype.index} / 04
-      </p>
-      <div className="mt-4 overflow-hidden">
-        <motion.h1
-          ref={headingRef}
-          tabIndex={-1}
-          className="font-display text-[clamp(4.2rem,12vw,8.5rem)] leading-[0.84] font-medium tracking-[-0.04em] outline-none"
-          initial={reduce ? false : { y: "110%" }}
-          animate={{ y: "0%" }}
-          transition={{ duration: 0.85, ease }}
-        >
-          {archetype.name}
-        </motion.h1>
-      </div>
-      <motion.p
-        className="mt-6 max-w-2xl font-display text-2xl leading-snug font-medium italic md:text-3xl"
+    <motion.section
+      initial={reduce ? false : { opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.45, ease }}
+      className="mt-4"
+      aria-live="polite"
+    >
+      <p className="text-sm font-medium text-pine">Результат опроса</p>
+      <h1
+        ref={headingRef}
+        tabIndex={-1}
+        className="mt-2 max-w-3xl font-display text-[clamp(1.7rem,3.4vw,2.6rem)] leading-[1.15] font-medium tracking-[-0.03em] outline-none"
+      >
+        {text.lead}
+      </h1>
+      <motion.div
+        className="mt-6 rounded-3xl bg-white p-5 ring-1 ring-black/5 md:p-8"
         initial={reduce ? false : { opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.25, duration: 0.5, ease }}
+        transition={{ delay: reduce ? 0 : 0.12, duration: 0.45, ease }}
       >
-        {archetype.line}
-      </motion.p>
-      <motion.p
-        className="mt-8 max-w-2xl text-base leading-relaxed text-stone md:text-lg"
-        initial={reduce ? false : { opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.4, duration: 0.5 }}
-      >
-        {archetype.portrait}
-      </motion.p>
+        <p className="font-display text-xl font-medium">{service.name}</p>
+        <p className="mt-2 text-pine">{service.price}</p>
+        <p className="mt-4 max-w-2xl leading-relaxed">{text.detail}</p>
+        <p className="mt-4 max-w-2xl leading-relaxed text-stone">{text.next}</p>
 
-      <div className="mt-12">
-        <p className="text-[0.72rem] font-medium tracking-[0.18em] uppercase text-stone">
-          Сильные стороны
-        </p>
-        <ul className="mt-4 grid gap-px bg-ink/10 md:grid-cols-3">
-          {archetype.strengths.map((strength, strengthIndex) => (
-            <motion.li
-              key={strength}
-              className="bg-ivory py-5 pr-4 font-display text-2xl leading-tight font-medium md:text-3xl"
-              initial={reduce ? false : { opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.45 + strengthIndex * 0.08, duration: 0.45, ease }}
-            >
-              {strength}
-            </motion.li>
-          ))}
-        </ul>
-      </div>
-
-      <motion.div
-        className="mt-12 border-l-2 border-cinnabar pl-6"
-        initial={reduce ? false : { opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.7, duration: 0.5, ease }}
-      >
-        <p className="text-[0.72rem] font-medium tracking-[0.18em] uppercase text-cinnabar">
-          Рекомендованный шаг
-        </p>
-        <p className="mt-3 max-w-2xl text-base leading-relaxed md:text-lg">
-          {archetype.nextStep}
-        </p>
-      </motion.div>
-
-      <div className="mt-12 max-w-xl">
-        <p className="text-[0.72rem] font-medium tracking-[0.18em] uppercase text-stone">
-          {score.totals[score.winner]} из {questions.length} ответов ближе к этому профилю
-          {score.tied ? ". При равенстве решил последний ответ" : ""}
-        </p>
-        <ul className="mt-4 space-y-3">
-          {archetypeOrder.map((id) => {
+        <ul className="mt-6 space-y-2">
+          {formatOrder.map((id) => {
             const total = score.totals[id];
             const active = id === score.winner;
             return (
-              <li key={id} className="grid grid-cols-[6.5rem_1fr_1.5rem] items-center gap-3 text-sm">
-                <span className={active ? "font-semibold" : "text-stone"}>
-                  {archetypes[id].name}
+              <li key={id} className="grid grid-cols-[8.5rem_1fr_1.25rem] items-center gap-3 text-sm">
+                <span className={cn("leading-tight", active ? "font-medium" : "text-stone")}>
+                  {services[id].name}
                 </span>
-                <span className="h-[3px] bg-ink/10" aria-hidden>
+                <span className="h-1.5 overflow-hidden rounded-full bg-ink/10" aria-hidden>
                   <motion.span
-                    className={cn("block h-[3px]", active ? "bg-cinnabar" : "bg-ink/35")}
+                    className={cn("block h-1.5 rounded-full", active ? "bg-pine" : "bg-ink/30")}
                     initial={{ width: 0 }}
                     animate={{ width: `${(total / questions.length) * 100}%` }}
-                    transition={{ duration: reduce ? 0 : 0.7, delay: 0.5, ease }}
+                    transition={{ duration: reduce ? 0 : 0.55, ease }}
                   />
                 </span>
-                <span className="text-right tabular-nums text-stone">{total}</span>
+                <span className="text-right text-stone tabular-nums">{total}</span>
               </li>
             );
           })}
         </ul>
-      </div>
+      </motion.div>
 
-      <div className="mt-12 flex flex-col items-start gap-3 sm:flex-row sm:flex-wrap">
-        <CtaLink href="mailto:hello@norda.studio?subject=%D0%9F%D1%80%D0%BE%D1%84%D0%B8%D0%BB%D1%8C%20%D1%8D%D0%BA%D1%81%D0%BF%D0%B5%D1%80%D1%82%D0%B0">
-          Написать в бюро
-        </CtaLink>
-        <Button
-          variant="outline"
-          className="h-12 px-6 text-[0.72rem] font-semibold tracking-[0.16em] uppercase"
-          onClick={onRestart}
-        >
+      <div className="mt-6 flex flex-col items-start gap-3 sm:flex-row">
+        <Button className="h-12 rounded-xl px-5 text-base" onClick={onRestart}>
+          <RotateCcw />
           Пройти ещё раз
         </Button>
-        <CtaLink href="/" variant="ghost" showArrow={false}>
-          На главную
-        </CtaLink>
+        <Button
+          variant="outline"
+          className="h-12 rounded-xl bg-white px-5 text-base"
+          nativeButton={false}
+          render={<Link href="/" />}
+        >
+          К карточке
+        </Button>
       </div>
-    </>
+    </motion.section>
   );
 }
