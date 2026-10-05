@@ -30,8 +30,8 @@ export function Quiz() {
   const [answers, setAnswers] = useState<ArchetypeId[]>([]);
   const [pending, setPending] = useState<string | null>(null);
   const timer = useRef<number | null>(null);
-  const indexRef = useRef(index);
   const headingRef = useRef<HTMLHeadingElement>(null);
+  const indexRef = useRef(index);
 
   useEffect(() => {
     indexRef.current = index;
@@ -42,12 +42,6 @@ export function Quiz() {
       if (timer.current) window.clearTimeout(timer.current);
     };
   }, []);
-
-  useEffect(() => {
-    if (phase !== "scoring") return;
-    const timeout = window.setTimeout(() => setPhase("result"), reduce ? 0 : 820);
-    return () => window.clearTimeout(timeout);
-  }, [phase, reduce]);
 
   useEffect(() => {
     if (phase === "intro") return;
@@ -95,21 +89,22 @@ export function Quiz() {
   function choose(optionId: string, archetype: ArchetypeId) {
     if (pending) return;
     clearTimer();
+    const questionIndex = indexRef.current;
     setPending(optionId);
     setAnswers((prev) => {
       const next = [...prev];
-      next[indexRef.current] = archetype;
+      next[questionIndex] = archetype;
       return next;
     });
-    const delay = reduce ? 0 : 420;
+    const delay = reduce ? 0 : 320;
     timer.current = window.setTimeout(() => {
       setPending(null);
-      const current = indexRef.current;
-      if (current >= questions.length - 1) {
-        setPhase(reduce ? "result" : "scoring");
+      if (questionIndex >= questions.length - 1) {
+        setPhase("scoring");
+        timer.current = window.setTimeout(() => setPhase("result"), reduce ? 0 : 720);
         return;
       }
-      setIndex(current + 1);
+      setIndex(questionIndex + 1);
     }, delay);
   }
 

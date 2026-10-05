@@ -59,10 +59,6 @@ export function SiteHeader() {
     else window.scrollTo(0, 0);
   }, [pathname]);
 
-  useEffect(() => {
-    setOpen(false);
-  }, [pathname]);
-
   const transparent = pathname === "/" && !solid && !open;
 
   return (
@@ -139,7 +135,7 @@ export function SiteHeader() {
                   </SheetClose>
                 ))}
               </nav>
-              <div className="mt-auto px-6 pb-8">
+              <div className="mt-auto px-6 pb-8" onClick={() => setOpen(false)}>
                 <CtaLink href="/quiz" className="w-full">
                   Пройти диагностику
                 </CtaLink>
