@@ -24,3 +24,9 @@ npm run dev
 - `npm run lint` — ESLint
 
 Секреты и внешние сервисы не нужны.
+
+## GitHub Pages
+
+Сборка статическая: `npm run build` пишет сайт в `out/`.
+
+В репозитории GitHub в Settings → Pages выберите источник **GitHub Actions**. Workflow `.github/workflows/pages.yml` публикует сайт при пуше в `main` или `cursor/norda-studio-site-e0a6`. Адрес будет `https://<user>.github.io/<repo>/`.
