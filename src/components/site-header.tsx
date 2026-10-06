@@ -20,20 +20,13 @@ export function SiteHeader() {
       <Link href="/" className={cn("font-display text-base font-medium tracking-[-0.04em]", home && "lg:invisible")}>
         Орлова
       </Link>
-      <nav className="flex items-center gap-5 text-sm">
-        {home ? null : (
+      {home ? null : (
+        <nav className="flex items-center gap-5 text-sm">
           <Link href="/" className="text-stone hover:text-ink">
             Работы
           </Link>
-        )}
-        <Link
-          href="/quiz"
-          aria-current={pathname === "/quiz" ? "page" : undefined}
-          className={cn(pathname === "/quiz" ? "underline underline-offset-4" : "hover:underline")}
-        >
-          Формат
-        </Link>
-      </nav>
+        </nav>
+      )}
     </header>
   );
 }

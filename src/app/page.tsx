@@ -1,4 +1,5 @@
 import { Reveal } from "@/components/reveal";
+import { WorkCarousel } from "@/components/work-carousel";
 import { formatOrder, sample, services } from "@/lib/card";
 import Image from "next/image";
 import Link from "next/link";
@@ -96,51 +97,7 @@ export default function HomePage() {
         </ul>
       </section>
 
-      <section aria-labelledby="family-caption">
-        <Reveal shift={false}>
-          <figure>
-            <Shot
-              src="/work/plate-family.jpg"
-              alt="Семья из четырёх человек идёт по полю в тёплом свете"
-              className="aspect-[4/5] sm:aspect-[3/2]"
-              position="object-[center_45%]"
-              sizes="100vw"
-            />
-            <figcaption
-              id="family-caption"
-              className="flex items-baseline justify-between gap-6 px-5 py-3 text-sm md:px-10"
-            >
-              <span>Семья</span>
-              <span className="text-right text-stone">
-                {services.family.time}, {services.family.price}
-              </span>
-            </figcaption>
-          </figure>
-        </Reveal>
-      </section>
-
-      <section className="pb-12 md:pb-16" aria-labelledby="event-caption">
-        <Reveal shift={false}>
-          <figure>
-            <Shot
-              src="/work/plate-event.jpg"
-              alt="Пара танцует, платье крутится в движении"
-              className="aspect-[4/5] sm:aspect-[3/2]"
-              position="object-[center_42%]"
-              sizes="100vw"
-            />
-            <figcaption
-              id="event-caption"
-              className="flex items-baseline justify-between gap-6 px-5 py-3 text-sm md:px-10"
-            >
-              <span>Съёмка события</span>
-              <span className="text-right text-stone">
-                {services.event.time}, {services.event.price}
-              </span>
-            </figcaption>
-          </figure>
-        </Reveal>
-      </section>
+      <WorkCarousel />
 
       <section className="border-t border-ink/15 px-5 py-16 md:px-10 md:py-24">
         <Reveal>
