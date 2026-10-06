@@ -3,111 +3,167 @@ import { formatOrder, sample, services } from "@/lib/card";
 import Image from "next/image";
 import Link from "next/link";
 
-const frames = [
-  {
-    src: "/work/portrait.jpg",
-    alt: "Женщина в белой рубашке стоит у окна, дневной свет сбоку",
-    caption: "Портрет",
-    note: "Естественный свет",
-    aspect: "aspect-[3/2]",
-    position: "object-[center_35%]",
-    width: "w-full",
-    priority: true,
-  },
-  {
-    src: "/work/family.jpg",
-    alt: "Пара держится за руки в тёплом свете",
-    caption: "Семья",
-    note: "Пара",
-    aspect: "aspect-[4/5]",
-    position: "object-[center_62%]",
-    width: "w-full sm:w-[86%] lg:w-[74%]",
-    priority: false,
-  },
-  {
-    src: "/work/event.jpg",
-    alt: "Двое идут по улице, снято со спины",
-    caption: "Событие",
-    note: "Город",
-    aspect: "aspect-[3/2]",
-    position: "object-[center_42%]",
-    width: "w-full",
-    priority: false,
-  },
-] as const;
+function Shot({
+  src,
+  alt,
+  className,
+  position,
+  priority = false,
+  sizes,
+}: {
+  src: string;
+  alt: string;
+  className: string;
+  position: string;
+  priority?: boolean;
+  sizes: string;
+}) {
+  return (
+    <div className={`relative overflow-hidden bg-ink/5 ${className}`}>
+      <Image
+        src={src}
+        alt={alt}
+        fill
+        priority={priority}
+        sizes={sizes}
+        className={`object-cover transition-transform duration-[1.2s] ease-out hover:scale-[1.035] motion-reduce:transition-none motion-reduce:hover:scale-100 ${position}`}
+      />
+    </div>
+  );
+}
 
 export default function HomePage() {
   return (
-    <main id="content" className="mx-auto max-w-[1400px] px-4 md:px-8 lg:px-10">
-      <div className="lg:grid lg:grid-cols-[minmax(16.5rem,23rem)_minmax(0,1fr)] lg:gap-x-16 xl:gap-x-24">
-        <aside className="border-b border-ink/10 py-8 lg:sticky lg:top-0 lg:flex lg:h-svh lg:flex-col lg:overflow-y-auto lg:border-b-0 lg:py-8 lg:pr-2">
-          <div>
-            <p className="text-sm text-stone">{sample.role}</p>
-            <h1 className="mt-3 font-display text-[2.7rem] leading-[0.92] font-medium tracking-[-0.045em] md:text-[3.15rem]">
+    <main id="content">
+      <section className="lg:grid lg:min-h-svh lg:grid-cols-12">
+        <div className="flex flex-col justify-between px-5 py-8 md:px-10 lg:col-span-4 lg:min-h-svh lg:py-12 lg:pt-20 lg:pr-8">
+          <Reveal immediate>
+            <p className="text-sm text-stone">{sample.city}</p>
+            <h1 className="mt-5 font-display text-[clamp(3.4rem,5.4vw,5.6rem)] leading-[0.86] font-medium tracking-[-0.055em]">
               Мария
               <br />
               Орлова
             </h1>
-            <p className="mt-4 max-w-xs text-[0.95rem] leading-relaxed text-stone">{sample.sentence}</p>
-          </div>
+            <p className="mt-3 text-sm text-stone">{sample.role}</p>
+          </Reveal>
+          <Reveal immediate delay={0.08} className="mt-12 max-w-sm lg:mt-0">
+            <p className="text-lg leading-snug md:text-xl">{sample.sentence}</p>
+            <Link
+              href="/quiz"
+              className="mt-6 inline-block border-b border-ink pb-0.5 text-base hover:text-stone"
+            >
+              Подобрать формат
+            </Link>
+          </Reveal>
+        </div>
+        <Reveal immediate shift={false} className="lg:col-span-8">
+          <Shot
+            src="/work/portrait.jpg"
+            alt="Женщина в белой рубашке стоит у окна, дневной свет сбоку"
+            className="h-[78vh] min-h-[28rem] lg:h-full lg:min-h-svh"
+            position="object-[center_40%]"
+            priority
+            sizes="(min-width: 1024px) 66vw, 100vw"
+          />
+        </Reveal>
+      </section>
 
-          <ul className="mt-8 border-t border-ink/15 lg:mt-10">
-            {formatOrder.map((id) => {
-              const service = services[id];
-              return (
-                <li key={id} className="border-b border-ink/15 py-3.5">
-                  <div className="flex items-baseline justify-between gap-4">
-                    <h2 className="text-[0.95rem] font-medium">{service.name}</h2>
-                    <p className="shrink-0 text-sm tabular-nums text-stone">{service.price}</p>
-                  </div>
-                  <p className="mt-1 text-sm text-stone">
+      <section id="services" className="scroll-mt-16 border-y border-ink/15" aria-labelledby="services-title">
+        <h2 id="services-title" className="sr-only">
+          Услуги
+        </h2>
+        <ul className="grid md:grid-cols-3">
+          {formatOrder.map((id, index) => {
+            const service = services[id];
+            return (
+              <li
+                key={id}
+                className="border-b border-ink/15 px-5 py-8 last:border-b-0 md:border-b-0 md:border-l md:px-8 md:py-12 md:first:border-l-0"
+              >
+                <Reveal delay={0.05 * index}>
+                  <h3 className="font-display text-[clamp(1.8rem,2.6vw,2.7rem)] leading-none font-medium tracking-[-0.045em]">
+                    {service.name}
+                  </h3>
+                  <p className="mt-4 max-w-[16rem] text-sm leading-relaxed text-stone">
                     {service.detail} {service.time[0].toUpperCase()}
                     {service.time.slice(1)}.
                   </p>
-                </li>
-              );
-            })}
-          </ul>
+                  <p className="mt-8 text-lg tabular-nums">{service.price}</p>
+                </Reveal>
+              </li>
+            );
+          })}
+        </ul>
+      </section>
 
-          <div className="mt-8 lg:mt-auto lg:pt-8">
-            <Link href="/quiz" className="text-[0.95rem] underline decoration-ink/30 underline-offset-4 hover:decoration-ink">
-              Подобрать формат
-            </Link>
-            <p className="mt-2 max-w-xs text-sm leading-relaxed text-stone">
-              Четыре вопроса, если не ясно, что бронировать.
-            </p>
-            <a href={sample.phoneHref} className="mt-6 block text-[0.95rem] tabular-nums hover:text-stone">
-              {sample.phone}
-            </a>
-            <a href={sample.emailHref} className="mt-1 block text-sm text-stone hover:text-ink">
-              {sample.email}
-            </a>
-          </div>
-        </aside>
+      <section className="grid items-end gap-6 px-5 py-16 md:px-10 md:py-24 lg:grid-cols-12 lg:gap-10">
+        <Reveal className="lg:col-span-4 lg:pb-2">
+          <h2 className="font-display text-[clamp(3rem,5vw,4.6rem)] leading-[0.88] font-medium tracking-[-0.05em]">
+            Семья
+          </h2>
+          <p className="mt-4 max-w-xs text-sm leading-relaxed text-stone">
+            {services.family.detail} {services.family.time[0].toUpperCase()}
+            {services.family.time.slice(1)}. {services.family.price}.
+          </p>
+        </Reveal>
+        <Reveal shift={false} className="lg:col-span-6 lg:col-start-6">
+          <figure>
+            <Shot
+              src="/work/family.jpg"
+              alt="Пара держится за руки в тёплом свете"
+              className="aspect-[4/5]"
+              position="object-[center_58%]"
+              sizes="(min-width: 1024px) 46vw, 100vw"
+            />
+            <figcaption className="mt-3 text-sm text-stone">Пара, тёплый свет</figcaption>
+          </figure>
+        </Reveal>
+      </section>
 
-        <div className="flex flex-col gap-14 py-8 md:gap-20 lg:py-8">
-          {frames.map((frame, index) => (
-            <Reveal key={frame.src} immediate={index === 0} delay={index === 0 ? 0.05 : 0}>
-              <figure className={frame.width}>
-                <div className={`relative overflow-hidden ${frame.aspect}`}>
-                  <Image
-                    src={frame.src}
-                    alt={frame.alt}
-                    fill
-                    priority={frame.priority}
-                    sizes="(min-width: 1024px) 62vw, 100vw"
-                    className={`object-cover transition-transform duration-700 ease-out motion-reduce:transition-none motion-reduce:hover:scale-100 hover:scale-[1.03] ${frame.position}`}
-                  />
-                </div>
-                <figcaption className="mt-3 flex items-baseline justify-between gap-4 text-sm">
-                  <span>{frame.caption}</span>
-                  <span className="text-stone">{frame.note}</span>
-                </figcaption>
-              </figure>
-            </Reveal>
-          ))}
-        </div>
-      </div>
+      <section className="grid items-center gap-6 pb-16 lg:grid-cols-12 lg:gap-0 lg:pb-24">
+        <Reveal className="px-5 md:px-10 lg:col-span-4 lg:py-10">
+          <h2 className="font-display text-[clamp(3rem,5vw,4.6rem)] leading-[0.88] font-medium tracking-[-0.05em]">
+            Событие
+          </h2>
+          <p className="mt-4 max-w-xs text-sm leading-relaxed text-stone">
+            {services.event.detail} {services.event.time[0].toUpperCase()}
+            {services.event.time.slice(1)}. {services.event.price}.
+          </p>
+        </Reveal>
+        <Reveal shift={false} className="lg:col-span-8">
+          <figure>
+            <Shot
+              src="/work/event.jpg"
+              alt="Двое идут по улице, снято со спины"
+              className="aspect-[4/5] sm:aspect-[3/2] lg:aspect-[16/11]"
+              position="object-[center_45%]"
+              sizes="(min-width: 1024px) 66vw, 100vw"
+            />
+            <figcaption className="mt-3 px-5 text-sm text-stone md:px-0 lg:px-8">Город</figcaption>
+          </figure>
+        </Reveal>
+      </section>
+
+      <section className="border-t border-ink/15 px-5 py-16 md:px-10 md:py-24">
+        <Reveal>
+          <p className="text-sm text-stone">Запись</p>
+          <Link
+            href="/quiz"
+            className="mt-4 block max-w-4xl font-display text-[clamp(2.6rem,6vw,5rem)] leading-[0.9] font-medium tracking-[-0.05em] hover:text-stone"
+          >
+            Подобрать формат
+          </Link>
+          <a
+            href={sample.phoneHref}
+            className="mt-8 block text-2xl tabular-nums tracking-[-0.03em] hover:text-stone md:text-3xl"
+          >
+            {sample.phone}
+          </a>
+          <a href={sample.emailHref} className="mt-2 inline-block text-stone hover:text-ink">
+            {sample.email}
+          </a>
+        </Reveal>
+      </section>
     </main>
   );
 }
