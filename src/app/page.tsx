@@ -59,9 +59,9 @@ export default function HomePage() {
         <Reveal immediate shift={false} className="lg:col-span-8">
           <Shot
             src="/work/portrait.jpg"
-            alt="Женщина в белой рубашке стоит у окна, дневной свет сбоку"
+            alt="Портрет женщины в белой рубашке, мягкий свет, взгляд в камеру"
             className="h-[78vh] min-h-[28rem] lg:h-full lg:min-h-svh"
-            position="object-[center_40%]"
+            position="object-[center_22%]"
             priority
             sizes="(min-width: 1024px) 66vw, 100vw"
           />
@@ -96,52 +96,77 @@ export default function HomePage() {
         </ul>
       </section>
 
-      <section className="grid items-end gap-6 px-5 py-16 md:px-10 md:py-24 lg:grid-cols-12 lg:gap-10">
-        <Reveal className="lg:col-span-4 lg:pb-2">
-          <h2 className="font-display text-[clamp(3rem,5vw,4.6rem)] leading-[0.88] font-medium tracking-[-0.05em]">
-            Семья
-          </h2>
-          <p className="mt-4 max-w-xs text-sm leading-relaxed text-stone">
-            {services.family.detail} {services.family.time[0].toUpperCase()}
-            {services.family.time.slice(1)}. {services.family.price}.
-          </p>
-        </Reveal>
-        <Reveal shift={false} className="lg:col-span-6 lg:col-start-6">
-          <figure>
-            <Shot
-              src="/work/family.jpg"
-              alt="Пара держится за руки в тёплом свете"
-              className="aspect-[4/5]"
-              position="object-[center_58%]"
-              sizes="(min-width: 1024px) 46vw, 100vw"
-            />
-            <figcaption className="mt-3 text-sm text-stone">Пара, тёплый свет</figcaption>
-          </figure>
-        </Reveal>
+      <section className="px-5 py-16 md:px-10 md:py-28" aria-labelledby="family-caption">
+        <div className="lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-8">
+          <div className="lg:col-span-7">
+            <Reveal shift={false}>
+              <figure>
+                <Shot
+                  src="/work/family.jpg"
+                  alt="Семья из четырёх человек идёт по полю в тёплом свете"
+                  className="aspect-[4/3]"
+                  position="object-[center_42%]"
+                  sizes="(min-width: 1024px) 54vw, 100vw"
+                />
+                <figcaption id="family-caption" className="mt-3 flex items-baseline justify-between gap-6 text-sm">
+                  <span>Семья</span>
+                  <span className="text-right text-stone">
+                    {services.family.time}, {services.family.price}
+                  </span>
+                </figcaption>
+              </figure>
+            </Reveal>
+          </div>
+          <div className="mt-8 ml-auto w-[72%] sm:w-[58%] lg:col-span-4 lg:col-start-9 lg:mt-36 lg:w-auto">
+            <Reveal shift={false}>
+              <Shot
+                src="/work/family-field.jpg"
+                alt="Ребёнок бежит по высокой траве на закате"
+                className="aspect-[4/5]"
+                position="object-[center_55%]"
+                sizes="(min-width: 1024px) 30vw, 70vw"
+              />
+            </Reveal>
+          </div>
+        </div>
       </section>
 
-      <section className="grid items-center gap-6 pb-16 lg:grid-cols-12 lg:gap-0 lg:pb-24">
-        <Reveal className="px-5 md:px-10 lg:col-span-4 lg:py-10">
-          <h2 className="font-display text-[clamp(3rem,5vw,4.6rem)] leading-[0.88] font-medium tracking-[-0.05em]">
-            Событие
-          </h2>
-          <p className="mt-4 max-w-xs text-sm leading-relaxed text-stone">
-            {services.event.detail} {services.event.time[0].toUpperCase()}
-            {services.event.time.slice(1)}. {services.event.price}.
-          </p>
-        </Reveal>
-        <Reveal shift={false} className="lg:col-span-8">
-          <figure>
-            <Shot
-              src="/work/event.jpg"
-              alt="Двое идут по улице, снято со спины"
-              className="aspect-[4/5] sm:aspect-[3/2] lg:aspect-[16/11]"
-              position="object-[center_45%]"
-              sizes="(min-width: 1024px) 66vw, 100vw"
-            />
-            <figcaption className="mt-3 px-5 text-sm text-stone md:px-0 lg:px-8">Город</figcaption>
-          </figure>
-        </Reveal>
+      <section className="pb-16 md:pb-28" aria-labelledby="event-caption">
+        <div className="lg:grid lg:grid-cols-12 lg:items-end lg:gap-x-8">
+          <div className="order-2 mt-10 w-[74%] px-5 sm:w-[52%] lg:order-1 lg:col-span-3 lg:mt-0 lg:w-auto lg:px-10">
+            <Reveal shift={false}>
+              <Shot
+                src="/work/event-dinner.jpg"
+                alt="Люди за длинным столом на ужине, тёплый свет"
+                className="aspect-[3/4]"
+                position="object-center"
+                sizes="(min-width: 1024px) 22vw, 70vw"
+              />
+            </Reveal>
+          </div>
+          <div className="order-1 lg:order-2 lg:col-span-9">
+            <Reveal shift={false}>
+              <figure>
+                <Shot
+                  src="/work/event.jpg"
+                  alt="Пара танцует, платье крутится в движении"
+                  className="aspect-[4/5] sm:aspect-[3/2]"
+                  position="object-[center_40%]"
+                  sizes="(min-width: 1024px) 72vw, 100vw"
+                />
+                <figcaption
+                  id="event-caption"
+                  className="mt-3 flex items-baseline justify-between gap-6 px-5 text-sm lg:px-0 lg:pr-10"
+                >
+                  <span>Съёмка события</span>
+                  <span className="text-right text-stone">
+                    {services.event.time}, {services.event.price}
+                  </span>
+                </figcaption>
+              </figure>
+            </Reveal>
+          </div>
+        </div>
       </section>
 
       <section className="border-t border-ink/15 px-5 py-16 md:px-10 md:py-24">
