@@ -1,3 +1,4 @@
+import { assetSrc } from "@/lib/asset";
 import { Reveal } from "@/components/reveal";
 import { WorkCarousel } from "@/components/work-carousel";
 import { formatOrder, sample, services } from "@/lib/card";
@@ -59,7 +60,7 @@ export default function HomePage() {
         </div>
         <Reveal immediate shift={false} className="lg:col-span-8">
           <Shot
-            src="/work/hero-portrait.jpg"
+            src={assetSrc("/work/hero-portrait.jpg")}
             alt="Женщина в белой рубашке стоит у окна, дневной свет сбоку"
             className="h-[78vh] min-h-[28rem] lg:h-full lg:min-h-svh"
             position="object-[center_40%]"

@@ -1,5 +1,6 @@
 "use client";
 
+import { assetSrc } from "@/lib/asset";
 import { services } from "@/lib/card";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import Image from "next/image";
@@ -13,7 +14,7 @@ function sentence(detail: string, time: string) {
 
 const slides = [
   {
-    src: "/work/portrait.jpg",
+    src: assetSrc("/work/portrait.jpg"),
     alt: "Портрет женщины в белой рубашке, мягкий свет, взгляд в камеру",
     label: "Портрет",
     detail: sentence(services.portrait.detail, services.portrait.time),
@@ -21,7 +22,7 @@ const slides = [
     position: "object-[center_22%]",
   },
   {
-    src: "/work/plate-family.jpg",
+    src: assetSrc("/work/plate-family.jpg"),
     alt: "Семья из четырёх человек идёт по полю в тёплом свете",
     label: "Семья",
     detail: sentence(services.family.detail, services.family.time),
@@ -29,7 +30,7 @@ const slides = [
     position: "object-[center_42%]",
   },
   {
-    src: "/work/plate-table.jpg",
+    src: assetSrc("/work/plate-table.jpg"),
     alt: "Люди за столом в тёплом свете ресторана",
     label: "Событие",
     detail: sentence(services.event.detail, services.event.time),
