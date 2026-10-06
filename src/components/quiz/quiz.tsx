@@ -1,15 +1,12 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { formatOrder, services, type FormatId } from "@/lib/card";
+import { formatOrder, sample, services, type FormatId } from "@/lib/card";
 import { questions, resultText, scoreQuiz } from "@/lib/quiz";
 import { cn } from "cn";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { ArrowLeft, RotateCcw } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState, type RefObject } from "react";
 
-const letters = ["А", "Б", "В"] as const;
 const ease = [0.22, 1, 0.36, 1] as const;
 
 export function Quiz() {
@@ -83,113 +80,104 @@ export function Quiz() {
         return;
       }
       setIndex(questionIndex + 1);
-    }, reduce ? 0 : 280);
+    }, reduce ? 0 : 260);
   }
 
   const step = done ? questions.length : index + 1;
 
   return (
-    <div className="mx-auto flex w-full max-w-5xl flex-col px-4 py-6 md:px-6 md:py-10">
+    <div className="mx-auto w-full max-w-[72rem] px-5 py-10 md:px-8 md:py-16">
       <div
-        className="mb-6 flex gap-1.5"
+        className="mb-8 h-px bg-ink/15"
         role="progressbar"
         aria-valuemin={1}
         aria-valuemax={questions.length}
         aria-valuenow={step}
         aria-label="Прогресс опроса"
       >
-        {questions.map((item, itemIndex) => (
-          <span
-            key={item.id}
-            className={cn(
-              "h-1.5 flex-1 rounded-full bg-ink/10 transition-colors duration-300 motion-reduce:transition-none",
-              itemIndex < step && "bg-pine",
-            )}
-          />
-        ))}
+        <div
+          className="h-px w-full origin-left bg-ink transition-transform duration-500 motion-reduce:transition-none"
+          style={{ transform: `scaleX(${step / questions.length})` }}
+        />
       </div>
 
       <p className="text-sm text-stone">
-        {done
-          ? "Короткий опрос · готово"
-          : `Короткий опрос · вопрос ${step} из ${questions.length}`}
+        {done ? "Готово" : `Вопрос ${step} из ${questions.length}`}
       </p>
 
       <AnimatePresence mode="wait">
         {!done && question ? (
           <motion.div
             key={question.id}
-            initial={reduce ? false : { opacity: 0, x: 24 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={reduce ? undefined : { opacity: 0, x: -20 }}
+            initial={reduce ? false : { opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={reduce ? undefined : { opacity: 0, y: -10 }}
             transition={{ duration: 0.35, ease }}
-            className="mt-4"
+            className="mt-6"
           >
-            <div className="grid items-start gap-6 lg:grid-cols-12 lg:gap-10">
+            <div className="grid items-start gap-8 lg:grid-cols-12 lg:gap-12">
               <div className="lg:col-span-5">
                 <h1
                   ref={headingRef}
                   tabIndex={-1}
-                  className="font-display text-[clamp(1.6rem,3vw,2.4rem)] leading-[1.15] font-medium tracking-[-0.03em] outline-none"
+                  className="font-display text-[clamp(2rem,4vw,3.4rem)] leading-[1.05] font-medium tracking-[-0.045em] outline-none"
                 >
                   {question.prompt}
                 </h1>
-                <p className="mt-3 text-sm leading-relaxed text-stone">
-                  Один ответ. Его можно сменить, вернувшись назад.
-                </p>
                 {index > 0 ? (
-                  <Button
-                    variant="ghost"
-                    className="mt-4 h-11 px-3 text-base"
+                  <button
+                    type="button"
+                    className="mt-8 border-b border-ink/40 pb-0.5 text-sm text-stone hover:text-ink disabled:opacity-40"
                     onClick={back}
                     disabled={pending !== null}
                   >
-                    <ArrowLeft />
                     Назад
-                  </Button>
+                  </button>
                 ) : (
-                  <Link
-                    href="/"
-                    className="mt-4 inline-flex h-11 items-center gap-2 rounded-xl px-3 text-base text-stone hover:text-ink"
-                  >
-                    <ArrowLeft className="size-4" aria-hidden />
-                    К карточке
+                  <Link href="/" className="mt-8 inline-block border-b border-ink/40 pb-0.5 text-sm text-stone hover:text-ink">
+                    На главную
                   </Link>
                 )}
               </div>
 
-              <div className="flex flex-col gap-3 lg:col-span-7" role="group" aria-label="Варианты ответа">
+              <div className="lg:col-span-7" role="group" aria-label="Варианты ответа">
                 {question.options.map((option, optionIndex) => {
-                  const selected = pending === option.id || (pending === null && answers[index] === option.format && answers.length > index);
+                  const selected =
+                    pending === option.id ||
+                    (pending === null && answers[index] === option.format && answers.length > index);
                   return (
-                    <motion.div
+                    <motion.button
                       key={option.id}
-                      initial={reduce ? false : { opacity: 0, y: 10 }}
+                      type="button"
+                      aria-pressed={selected}
+                      disabled={pending !== null && pending !== option.id}
+                      onClick={() => choose(option.id, option.format)}
+                      initial={reduce ? false : { opacity: 0, y: 8 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: reduce ? 0 : 0.05 * optionIndex, duration: 0.3, ease }}
+                      transition={{ delay: reduce ? 0 : 0.04 * optionIndex, duration: 0.3, ease }}
+                      className={cn(
+                        "flex min-h-16 w-full items-center gap-5 border-b border-ink/15 py-5 text-left text-lg transition-colors duration-200 motion-reduce:transition-none md:min-h-[4.75rem] md:text-xl",
+                        "hover:text-stone disabled:cursor-default",
+                        selected && "text-ink",
+                      )}
                     >
-                      <Button
-                        variant="outline"
-                        aria-pressed={selected}
-                        disabled={pending !== null && pending !== option.id}
-                        onClick={() => choose(option.id, option.format)}
+                      <span
                         className={cn(
-                          "h-auto min-h-[4.75rem] w-full items-center justify-start gap-4 rounded-2xl bg-white px-4 py-4 text-left text-base font-normal whitespace-normal hover:border-pine hover:bg-accent md:min-h-[5.25rem] md:px-5 md:text-lg",
-                          selected &&
-                            "border-pine bg-pine text-white hover:border-pine hover:bg-pine hover:text-white",
+                          "w-4 shrink-0 text-sm tabular-nums text-stone",
+                          selected && "text-ink",
                         )}
                       >
-                        <span
-                          className={cn(
-                            "flex size-10 shrink-0 items-center justify-center rounded-xl bg-paper font-display text-sm text-ink",
-                            selected && "bg-white/15 text-white",
-                          )}
-                        >
-                          {letters[optionIndex]}
-                        </span>
-                        <span className="leading-snug">{option.label}</span>
-                      </Button>
-                    </motion.div>
+                        {optionIndex + 1}
+                      </span>
+                      <span className="leading-snug">{option.label}</span>
+                      <span
+                        className={cn(
+                          "ml-auto size-2 shrink-0 rounded-full bg-transparent",
+                          selected && "bg-ink",
+                        )}
+                        aria-hidden
+                      />
+                    </motion.button>
                   );
                 })}
               </div>
@@ -202,15 +190,14 @@ export function Quiz() {
         ) : null}
 
         {done && !score ? (
-          <motion.div key="incomplete" className="mt-6">
-            <h1 ref={headingRef} tabIndex={-1} className="font-display text-3xl font-medium outline-none">
+          <div key="incomplete" className="mt-8">
+            <h1 ref={headingRef} tabIndex={-1} className="font-display text-4xl font-medium outline-none">
               Не хватает ответов.
             </h1>
-            <p className="mt-3 text-stone">Опрос собирается из всех четырёх вопросов.</p>
-            <Button className="mt-6 h-12 rounded-xl px-5 text-base" onClick={restart}>
+            <button type="button" className="mt-8 border-b border-ink pb-0.5" onClick={restart}>
               Начать сначала
-            </Button>
-          </motion.div>
+            </button>
+          </div>
         ) : null}
       </AnimatePresence>
     </div>
@@ -236,66 +223,61 @@ function Result({
       initial={reduce ? false : { opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.45, ease }}
-      className="mt-4"
+      className="mt-6"
       aria-live="polite"
     >
-      <p className="text-sm font-medium text-pine">Результат опроса</p>
       <h1
         ref={headingRef}
         tabIndex={-1}
-        className="mt-2 max-w-3xl font-display text-[clamp(1.7rem,3.4vw,2.6rem)] leading-[1.15] font-medium tracking-[-0.03em] outline-none"
+        className="max-w-4xl font-display text-[clamp(3rem,8vw,6rem)] leading-[0.92] font-medium tracking-[-0.05em] outline-none"
       >
-        {text.lead}
+        {service.name}
       </h1>
       <motion.div
-        className="mt-6 rounded-3xl bg-white p-5 ring-1 ring-black/5 md:p-8"
-        initial={reduce ? false : { opacity: 0, y: 12 }}
+        initial={reduce ? false : { opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: reduce ? 0 : 0.12, duration: 0.45, ease }}
+        transition={{ delay: reduce ? 0 : 0.12, duration: 0.4, ease }}
       >
-        <p className="font-display text-xl font-medium">{service.name}</p>
-        <p className="mt-2 text-pine">{service.price}</p>
-        <p className="mt-4 max-w-2xl leading-relaxed">{text.detail}</p>
-        <p className="mt-4 max-w-2xl leading-relaxed text-stone">{text.next}</p>
+        <p className="mt-5 max-w-xl text-lg text-stone">
+          {score.tied
+            ? "Ответы разошлись поровну. Формат выбрал последний ответ."
+            : "Этот формат ближе по ответам."}
+        </p>
+        <p className="mt-4 text-xl tabular-nums">{service.price}</p>
+        <p className="mt-6 max-w-xl leading-relaxed">{text.detail}</p>
+        <p className="mt-3 max-w-xl leading-relaxed text-stone">{text.next}</p>
 
-        <ul className="mt-6 space-y-2">
+        <ul className="mt-10 max-w-md">
           {formatOrder.map((id) => {
             const total = score.totals[id];
             const active = id === score.winner;
             return (
-              <li key={id} className="grid grid-cols-[8.5rem_1fr_1.25rem] items-center gap-3 text-sm">
-                <span className={cn("leading-tight", active ? "font-medium" : "text-stone")}>
+              <li
+                key={id}
+                className="grid grid-cols-[minmax(0,1fr)_2.5rem] items-center gap-4 border-t border-ink/15 py-3 text-sm last:border-b"
+              >
+                <span className={active ? "font-medium" : "text-stone"}>
                   {services[id].name}
+                  <span className="sr-only">, {total} из {questions.length}</span>
                 </span>
-                <span className="h-1.5 overflow-hidden rounded-full bg-ink/10" aria-hidden>
-                  <motion.span
-                    className={cn("block h-1.5 rounded-full", active ? "bg-pine" : "bg-ink/30")}
-                    initial={{ width: 0 }}
-                    animate={{ width: `${(total / questions.length) * 100}%` }}
-                    transition={{ duration: reduce ? 0 : 0.55, ease }}
-                  />
-                </span>
-                <span className="text-right text-stone tabular-nums">{total}</span>
+                <span className="text-right tabular-nums">{total}</span>
               </li>
             );
           })}
         </ul>
-      </motion.div>
 
-      <div className="mt-6 flex flex-col items-start gap-3 sm:flex-row">
-        <Button className="h-12 rounded-xl px-5 text-base" onClick={onRestart}>
-          <RotateCcw />
-          Пройти ещё раз
-        </Button>
-        <Button
-          variant="outline"
-          className="h-12 rounded-xl bg-white px-5 text-base"
-          nativeButton={false}
-          render={<Link href="/" />}
-        >
-          К карточке
-        </Button>
-      </div>
+        <div className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-4">
+          <button type="button" className="border-b border-ink pb-0.5" onClick={onRestart}>
+            Пройти ещё раз
+          </button>
+          <a href={sample.emailHref} className="border-b border-ink/40 pb-0.5 text-stone hover:text-ink">
+            Написать
+          </a>
+          <Link href="/" className="text-stone hover:text-ink">
+            На главную
+          </Link>
+        </div>
+      </motion.div>
     </motion.section>
   );
 }

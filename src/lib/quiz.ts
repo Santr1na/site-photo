@@ -92,7 +92,7 @@ export function resultText(score: Score) {
 
   return {
     lead,
-    detail: `${service.detail} В этом образце цена ${service.price}, съёмка занимает ${service.time}.`,
-    next: "Дальше на настоящем сайте человек пишет фотографу и называет удобный день. Здесь контакт образцовый: сообщение никуда не уходит.",
+    detail: `${service.detail} Съёмка занимает ${service.time}. ${service.price}.`,
+    next: "Напишите или позвоните и назовите удобный день. Я подтвержу время.",
   };
 }

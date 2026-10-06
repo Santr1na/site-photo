@@ -1,23 +1,44 @@
+"use client";
+
+import { cn } from "cn";
 import Link from "next/link";
-import { sample } from "@/lib/card";
+import { usePathname } from "next/navigation";
+
+const links = [
+  { href: "/#services", label: "Услуги", match: null },
+  { href: "/quiz", label: "Формат", match: "/quiz" },
+] as const;
 
 export function SiteHeader() {
+  const pathname = usePathname();
+
   return (
-    <header className="sticky top-0 z-40 border-b border-border/80 bg-paper/90 backdrop-blur-md">
-      <div className="mx-auto flex h-14 max-w-5xl items-center justify-between gap-3 px-4 md:h-16 md:px-6">
-        <Link href="/" className="min-w-0 rounded-lg outline-none focus-visible:ring-3 focus-visible:ring-pine/40">
-          <span className="text-xs font-medium text-pine">Образец</span>
-          <span className="mt-0.5 block truncate font-display text-sm leading-none font-medium">
-            {sample.name}
-          </span>
-        </Link>
+    <header className="sticky top-0 z-40 border-b border-ink/10 bg-paper/88 backdrop-blur-md">
+      <div className="mx-auto flex h-14 max-w-[72rem] items-center justify-between px-5 md:h-[4.25rem] md:px-8">
         <Link
-          href="/quiz"
-          className="inline-flex h-10 shrink-0 items-center rounded-xl bg-pine px-3.5 text-sm font-medium text-white transition-colors hover:bg-pine/90 focus-visible:ring-3 focus-visible:ring-pine/40 focus-visible:outline-none"
+          href="/"
+          className="font-display text-[0.95rem] leading-none font-medium tracking-[-0.04em]"
         >
-          <span className="sm:hidden">Опрос</span>
-          <span className="hidden sm:inline">Короткий опрос</span>
+          Орлова
         </Link>
+        <nav className="flex items-center gap-6 text-sm">
+          {links.map((link) => {
+            const active = link.match !== null && pathname === link.match;
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                aria-current={active ? "page" : undefined}
+                className={cn(
+                  "underline-offset-4 hover:underline",
+                  active && "underline",
+                )}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
+        </nav>
       </div>
     </header>
   );

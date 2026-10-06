@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { Quiz } from "@/components/quiz/quiz";
 
 export const metadata: Metadata = {
-  title: "Короткий опрос",
+  title: "Формат съёмки",
   description:
-    "Четыре вопроса образца сайта-визитки: какой формат съёмки ближе и что делать дальше. Ответы считаются в браузере.",
+    "Четыре вопроса, чтобы выбрать формат съёмки у Марии Орловой: портрет, семья или событие. Ответы считаются в браузере.",
 };
 
 export default function QuizPage() {

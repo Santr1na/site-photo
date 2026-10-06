@@ -2,9 +2,11 @@ export const sample = {
   name: "Мария Орлова",
   city: "Казань",
   role: "Частный фотограф",
-  sentence: "Снимаю портреты, семьи и небольшие события в городе.",
+  sentence: "Снимаю портреты, семьи и небольшие события. Встреча в городе, готовые фото через неделю.",
   phone: "+7 900 000-00-00",
-  email: "sample@example.com",
+  phoneHref: "tel:+79000000000",
+  email: "maria@example.com",
+  emailHref: "mailto:maria@example.com",
 } as const;
 
 export const formatOrder = ["portrait", "family", "event"] as const;
