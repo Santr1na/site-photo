@@ -13,12 +13,12 @@ function sentence(detail: string, time: string) {
 
 const slides = [
   {
-    src: "/work/plate-portrait.jpg",
-    alt: "Женщина в белой рубашке сидит на ступенях, дневной свет",
+    src: "/work/portrait.jpg",
+    alt: "Портрет женщины в белой рубашке, мягкий свет, взгляд в камеру",
     label: "Портрет",
     detail: sentence(services.portrait.detail, services.portrait.time),
     price: services.portrait.price,
-    position: "object-[center_18%]",
+    position: "object-[center_22%]",
   },
   {
     src: "/work/plate-family.jpg",
