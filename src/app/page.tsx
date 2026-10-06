@@ -41,7 +41,7 @@ export default function HomePage() {
         <div className="flex flex-col justify-between px-5 py-8 md:px-10 lg:col-span-4 lg:min-h-svh lg:py-12 lg:pt-20 lg:pr-8">
           <Reveal immediate>
             <p className="text-sm text-stone">{sample.city}</p>
-            <h1 className="mt-5 font-display text-[clamp(3.4rem,5.4vw,5.6rem)] leading-[0.86] font-medium tracking-[-0.055em]">
+            <h1 className="mt-5 font-display text-[clamp(2.7rem,11vw,5.6rem)] leading-[0.86] font-medium tracking-[-0.055em]">
               Мария
               <br />
               Орлова
@@ -62,8 +62,8 @@ export default function HomePage() {
           <Shot
             src={assetSrc("/work/hero-portrait.jpg")}
             alt="Женщина в белой рубашке стоит у окна, дневной свет сбоку"
-            className="h-[78vh] min-h-[28rem] lg:h-full lg:min-h-svh"
-            position="object-[center_40%]"
+            className="h-[68vh] min-h-[22rem] sm:h-[74vh] lg:h-full lg:min-h-svh"
+            position="object-[left_42%] lg:object-[16%_40%]"
             priority
             sizes="(min-width: 1024px) 66vw, 100vw"
           />
