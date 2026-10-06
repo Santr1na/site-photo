@@ -96,77 +96,50 @@ export default function HomePage() {
         </ul>
       </section>
 
-      <section className="px-5 py-16 md:px-10 md:py-28" aria-labelledby="family-caption">
-        <div className="lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-8">
-          <div className="lg:col-span-7">
-            <Reveal shift={false}>
-              <figure>
-                <Shot
-                  src="/work/family.jpg"
-                  alt="Семья из четырёх человек идёт по полю в тёплом свете"
-                  className="aspect-[4/3]"
-                  position="object-[center_42%]"
-                  sizes="(min-width: 1024px) 54vw, 100vw"
-                />
-                <figcaption id="family-caption" className="mt-3 flex items-baseline justify-between gap-6 text-sm">
-                  <span>Семья</span>
-                  <span className="text-right text-stone">
-                    {services.family.time}, {services.family.price}
-                  </span>
-                </figcaption>
-              </figure>
-            </Reveal>
-          </div>
-          <div className="mt-8 ml-auto w-[72%] sm:w-[58%] lg:col-span-4 lg:col-start-9 lg:mt-36 lg:w-auto">
-            <Reveal shift={false}>
-              <Shot
-                src="/work/family-field.jpg"
-                alt="Ребёнок бежит по высокой траве на закате"
-                className="aspect-[4/5]"
-                position="object-[center_55%]"
-                sizes="(min-width: 1024px) 30vw, 70vw"
-              />
-            </Reveal>
-          </div>
-        </div>
+      <section aria-labelledby="family-caption">
+        <Reveal shift={false}>
+          <figure>
+            <Shot
+              src="/work/plate-family.jpg"
+              alt="Семья из четырёх человек идёт по полю в тёплом свете"
+              className="aspect-[4/5] sm:aspect-[3/2]"
+              position="object-[center_45%]"
+              sizes="100vw"
+            />
+            <figcaption
+              id="family-caption"
+              className="flex items-baseline justify-between gap-6 px-5 py-3 text-sm md:px-10"
+            >
+              <span>Семья</span>
+              <span className="text-right text-stone">
+                {services.family.time}, {services.family.price}
+              </span>
+            </figcaption>
+          </figure>
+        </Reveal>
       </section>
 
-      <section className="pb-16 md:pb-28" aria-labelledby="event-caption">
-        <div className="lg:grid lg:grid-cols-12 lg:items-end lg:gap-x-8">
-          <div className="order-2 mt-10 w-[74%] px-5 sm:w-[52%] lg:order-1 lg:col-span-3 lg:mt-0 lg:w-auto lg:px-10">
-            <Reveal shift={false}>
-              <Shot
-                src="/work/event-dinner.jpg"
-                alt="Люди за длинным столом на ужине, тёплый свет"
-                className="aspect-[3/4]"
-                position="object-center"
-                sizes="(min-width: 1024px) 22vw, 70vw"
-              />
-            </Reveal>
-          </div>
-          <div className="order-1 lg:order-2 lg:col-span-9">
-            <Reveal shift={false}>
-              <figure>
-                <Shot
-                  src="/work/event.jpg"
-                  alt="Пара танцует, платье крутится в движении"
-                  className="aspect-[4/5] sm:aspect-[3/2]"
-                  position="object-[center_40%]"
-                  sizes="(min-width: 1024px) 72vw, 100vw"
-                />
-                <figcaption
-                  id="event-caption"
-                  className="mt-3 flex items-baseline justify-between gap-6 px-5 text-sm lg:px-0 lg:pr-10"
-                >
-                  <span>Съёмка события</span>
-                  <span className="text-right text-stone">
-                    {services.event.time}, {services.event.price}
-                  </span>
-                </figcaption>
-              </figure>
-            </Reveal>
-          </div>
-        </div>
+      <section className="pb-12 md:pb-16" aria-labelledby="event-caption">
+        <Reveal shift={false}>
+          <figure>
+            <Shot
+              src="/work/plate-event.jpg"
+              alt="Пара танцует, платье крутится в движении"
+              className="aspect-[4/5] sm:aspect-[3/2]"
+              position="object-[center_42%]"
+              sizes="100vw"
+            />
+            <figcaption
+              id="event-caption"
+              className="flex items-baseline justify-between gap-6 px-5 py-3 text-sm md:px-10"
+            >
+              <span>Съёмка события</span>
+              <span className="text-right text-stone">
+                {services.event.time}, {services.event.price}
+              </span>
+            </figcaption>
+          </figure>
+        </Reveal>
       </section>
 
       <section className="border-t border-ink/15 px-5 py-16 md:px-10 md:py-24">
