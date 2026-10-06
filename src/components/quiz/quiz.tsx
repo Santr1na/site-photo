@@ -86,9 +86,9 @@ export function Quiz() {
   const step = done ? questions.length : index + 1;
 
   return (
-    <div className="mx-auto w-full max-w-[72rem] px-5 py-10 md:px-8 md:py-16">
+    <div className="mx-auto w-full max-w-[86rem] px-4 py-8 md:px-8 md:py-14">
       <div
-        className="mb-8 h-px bg-ink/15"
+        className="mb-8 h-2 bg-ink/10"
         role="progressbar"
         aria-valuemin={1}
         aria-valuemax={questions.length}
@@ -96,7 +96,7 @@ export function Quiz() {
         aria-label="Прогресс опроса"
       >
         <div
-          className="h-px w-full origin-left bg-ink transition-transform duration-500 motion-reduce:transition-none"
+          className="h-2 w-full origin-left bg-signal transition-transform duration-500 motion-reduce:transition-none"
           style={{ transform: `scaleX(${step / questions.length})` }}
         />
       </div>
@@ -120,7 +120,7 @@ export function Quiz() {
                 <h1
                   ref={headingRef}
                   tabIndex={-1}
-                  className="font-display text-[clamp(2rem,4vw,3.4rem)] leading-[1.05] font-medium tracking-[-0.045em] outline-none"
+                  className="font-display text-[clamp(2.4rem,5vw,4.6rem)] leading-[0.92] font-medium tracking-[-0.05em] outline-none"
                 >
                   {question.prompt}
                 </h1>
@@ -156,27 +156,15 @@ export function Quiz() {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: reduce ? 0 : 0.04 * optionIndex, duration: 0.3, ease }}
                       className={cn(
-                        "flex min-h-16 w-full items-center gap-5 border-b border-ink/15 py-5 text-left text-lg transition-colors duration-200 motion-reduce:transition-none md:min-h-[4.75rem] md:text-xl",
-                        "hover:text-stone disabled:cursor-default",
-                        selected && "text-ink",
+                        "flex min-h-[4.5rem] w-full items-center gap-5 border-b-2 border-ink px-2 py-5 text-left text-xl transition-colors duration-200 motion-reduce:transition-none md:min-h-[5.75rem] md:text-2xl",
+                        "hover:bg-ink hover:text-paper disabled:cursor-default",
+                        selected && "bg-signal text-ink hover:bg-signal hover:text-ink",
                       )}
                     >
-                      <span
-                        className={cn(
-                          "w-4 shrink-0 text-sm tabular-nums text-stone",
-                          selected && "text-ink",
-                        )}
-                      >
+                      <span className="w-6 shrink-0 font-display text-lg tabular-nums">
                         {optionIndex + 1}
                       </span>
                       <span className="leading-snug">{option.label}</span>
-                      <span
-                        className={cn(
-                          "ml-auto size-2 shrink-0 rounded-full bg-transparent",
-                          selected && "bg-ink",
-                        )}
-                        aria-hidden
-                      />
                     </motion.button>
                   );
                 })}
@@ -229,7 +217,7 @@ function Result({
       <h1
         ref={headingRef}
         tabIndex={-1}
-        className="max-w-4xl font-display text-[clamp(3rem,8vw,6rem)] leading-[0.92] font-medium tracking-[-0.05em] outline-none"
+        className="max-w-5xl font-display text-[clamp(3.6rem,10vw,7.5rem)] leading-[0.84] font-medium tracking-[-0.06em] outline-none"
       >
         {service.name}
       </h1>
@@ -243,7 +231,9 @@ function Result({
             ? "Ответы разошлись поровну. Формат выбрал последний ответ."
             : "Этот формат ближе по ответам."}
         </p>
-        <p className="mt-4 text-xl tabular-nums">{service.price}</p>
+        <p className="mt-6 inline-block bg-signal px-3 py-2 font-display text-2xl font-medium tracking-[-0.04em] text-ink md:text-4xl">
+          {service.price}
+        </p>
         <p className="mt-6 max-w-xl leading-relaxed">{text.detail}</p>
         <p className="mt-3 max-w-xl leading-relaxed text-stone">{text.next}</p>
 
