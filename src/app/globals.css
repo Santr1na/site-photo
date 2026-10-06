@@ -12,8 +12,7 @@
   --font-heading: var(--font-unbounded), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-unbounded), ui-sans-serif, system-ui, sans-serif;
   --color-ink: #14120f;
-  --color-paper: #f3efe6;
-  --color-signal: #d6ff3f;
+  --color-paper: #f6f5f2;
   --color-stone: #5e5850;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -54,7 +53,7 @@
 }
 
 :root {
-  --background: #f3efe6;
+  --background: #f6f5f2;
   --foreground: #14120f;
   --card: #f3efe6;
   --card-foreground: #14120f;

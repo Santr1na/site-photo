@@ -96,7 +96,7 @@ export function Quiz() {
         aria-label="Прогресс опроса"
       >
         <div
-          className="h-2 w-full origin-left bg-signal transition-transform duration-500 motion-reduce:transition-none"
+          className="h-2 w-full origin-left bg-ink transition-transform duration-500 motion-reduce:transition-none"
           style={{ transform: `scaleX(${step / questions.length})` }}
         />
       </div>
@@ -158,7 +158,7 @@ export function Quiz() {
                       className={cn(
                         "flex min-h-[4.5rem] w-full items-center gap-5 border-b-2 border-ink px-2 py-5 text-left text-xl transition-colors duration-200 motion-reduce:transition-none md:min-h-[5.75rem] md:text-2xl",
                         "hover:bg-ink hover:text-paper disabled:cursor-default",
-                        selected && "bg-signal text-ink hover:bg-signal hover:text-ink",
+                        selected && "bg-ink text-paper hover:bg-ink hover:text-paper",
                       )}
                     >
                       <span className="w-6 shrink-0 font-display text-lg tabular-nums">
@@ -231,7 +231,7 @@ function Result({
             ? "Ответы разошлись поровну. Формат выбрал последний ответ."
             : "Этот формат ближе по ответам."}
         </p>
-        <p className="mt-6 inline-block bg-signal px-3 py-2 font-display text-2xl font-medium tracking-[-0.04em] text-ink md:text-4xl">
+        <p className="mt-6 font-display text-[clamp(1.6rem,3vw,2.4rem)] leading-none font-medium tracking-[-0.04em] tabular-nums">
           {service.price}
         </p>
         <p className="mt-6 max-w-xl leading-relaxed">{text.detail}</p>

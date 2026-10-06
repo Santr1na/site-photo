@@ -6,25 +6,24 @@ import { usePathname } from "next/navigation";
 
 export function SiteHeader() {
   const pathname = usePathname();
-  const onQuiz = pathname === "/quiz";
+  const home = pathname === "/";
 
   return (
-    <header className="sticky top-0 z-40 border-b-2 border-ink bg-paper">
-      <div className="mx-auto flex h-14 max-w-[86rem] items-center justify-between gap-4 px-4 md:h-[4.25rem] md:px-8">
-        <Link href="/" className="font-display text-lg leading-none font-medium tracking-[-0.05em] md:text-xl">
+    <header className={cn("sticky top-0 z-40 bg-paper/92 backdrop-blur-md", home && "lg:hidden")}>
+      <div className="mx-auto flex h-14 max-w-[1400px] items-center justify-between px-4 md:px-8">
+        <Link href="/" className="font-display text-base font-medium tracking-[-0.04em]">
           Орлова
         </Link>
-        <nav className="flex items-center gap-5 text-sm md:gap-7 md:text-base">
-          <Link href="/#services" className="hover:underline">
-            Услуги
-          </Link>
+        <nav className="flex items-center gap-5 text-sm">
+          {home ? null : (
+            <Link href="/" className="text-stone hover:text-ink">
+              Работы
+            </Link>
+          )}
           <Link
             href="/quiz"
-            aria-current={onQuiz ? "page" : undefined}
-            className={cn(
-              "bg-signal px-3 py-2 font-medium text-ink",
-              onQuiz && "outline outline-2 outline-offset-2 outline-ink",
-            )}
+            aria-current={pathname === "/quiz" ? "page" : undefined}
+            className={cn(pathname === "/quiz" ? "underline underline-offset-4" : "hover:underline")}
           >
             Формат
           </Link>

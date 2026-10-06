@@ -1,121 +1,113 @@
 import { Reveal } from "@/components/reveal";
 import { formatOrder, sample, services } from "@/lib/card";
+import Image from "next/image";
 import Link from "next/link";
+
+const frames = [
+  {
+    src: "/work/portrait.jpg",
+    alt: "Женщина в белой рубашке стоит у окна, дневной свет сбоку",
+    caption: "Портрет",
+    note: "Естественный свет",
+    aspect: "aspect-[3/2]",
+    position: "object-[center_35%]",
+    width: "w-full",
+    priority: true,
+  },
+  {
+    src: "/work/family.jpg",
+    alt: "Пара держится за руки в тёплом свете",
+    caption: "Семья",
+    note: "Пара",
+    aspect: "aspect-[4/5]",
+    position: "object-[center_62%]",
+    width: "w-full sm:w-[86%] lg:w-[74%]",
+    priority: false,
+  },
+  {
+    src: "/work/event.jpg",
+    alt: "Двое идут по улице, снято со спины",
+    caption: "Событие",
+    note: "Город",
+    aspect: "aspect-[3/2]",
+    position: "object-[center_42%]",
+    width: "w-full",
+    priority: false,
+  },
+] as const;
 
 export default function HomePage() {
   return (
-    <main id="content">
-      <section className="mx-auto flex min-h-[calc(100svh-3.5rem)] max-w-[86rem] flex-col px-4 pt-5 pb-6 md:min-h-[calc(100svh-4.25rem)] md:px-8 md:pt-8 md:pb-8">
-        <div className="grid flex-1 items-end gap-5 lg:grid-cols-12 lg:gap-8">
-          <Reveal immediate className="lg:col-span-8">
-            <h1 className="font-display text-[clamp(4.7rem,13.2vw,10.8rem)] leading-[0.78] font-medium tracking-[-0.065em]">
+    <main id="content" className="mx-auto max-w-[1400px] px-4 md:px-8 lg:px-10">
+      <div className="lg:grid lg:grid-cols-[minmax(16.5rem,23rem)_minmax(0,1fr)] lg:gap-x-16 xl:gap-x-24">
+        <aside className="border-b border-ink/10 py-8 lg:sticky lg:top-0 lg:flex lg:h-svh lg:flex-col lg:overflow-y-auto lg:border-b-0 lg:py-8 lg:pr-2">
+          <div>
+            <p className="text-sm text-stone">{sample.role}</p>
+            <h1 className="mt-3 font-display text-[2.7rem] leading-[0.92] font-medium tracking-[-0.045em] md:text-[3.15rem]">
               Мария
               <br />
               Орлова
             </h1>
-          </Reveal>
-          <Reveal immediate delay={0.08} className="lg:col-span-4">
-            <Link
-              href="/quiz"
-              className="flex min-h-56 flex-col justify-between bg-signal p-5 text-ink transition-transform duration-300 hover:-translate-y-1 motion-reduce:transition-none motion-reduce:hover:translate-y-0 md:min-h-72 md:p-6"
-            >
-              <span className="font-display text-[clamp(2.2rem,4vw,3.5rem)] leading-[0.9] font-medium tracking-[-0.05em]">
-                от 8 тысяч
-              </span>
-              <span>
-                <span className="block max-w-[16rem] text-sm leading-snug">
-                  Портрет, семья или событие. Четыре вопроса — и понятно, что бронировать.
-                </span>
-                <span className="mt-4 block text-lg font-medium">Подобрать формат</span>
-              </span>
-            </Link>
-          </Reveal>
-        </div>
-
-        <Reveal immediate delay={0.14}>
-          <div className="mt-6 grid gap-4 border-t-2 border-ink pt-4 md:mt-8 md:grid-cols-[10rem_1fr_auto] md:items-end md:gap-8 md:pt-5">
-            <p className="text-sm leading-snug">
-              {sample.role}
-              <br />
-              {sample.city}
-            </p>
-            <p className="max-w-xl text-lg leading-snug md:text-2xl">{sample.sentence}</p>
-            <a href={sample.phoneHref} className="text-lg tabular-nums hover:text-stone md:text-xl">
-              {sample.phone}
-            </a>
+            <p className="mt-4 max-w-xs text-[0.95rem] leading-relaxed text-stone">{sample.sentence}</p>
           </div>
-        </Reveal>
-      </section>
 
-      <section id="services" className="scroll-mt-20" aria-labelledby="services-title">
-        <div className="mx-auto max-w-[86rem] px-4 md:px-8">
-          <h2 id="services-title" className="sr-only">
-            Услуги
-          </h2>
-          <ul>
-            {formatOrder.map((id, index) => {
+          <ul className="mt-8 border-t border-ink/15 lg:mt-10">
+            {formatOrder.map((id) => {
               const service = services[id];
               return (
-                <li key={id}>
-                  <Reveal delay={0.04 * index}>
-                    <article className="rate-row group grid gap-3 py-7 transition-colors duration-200 motion-reduce:transition-none hover:bg-ink hover:text-paper md:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)_auto] md:items-end md:gap-8 md:px-3 md:py-9">
-                      <h3 className="font-display text-[clamp(2.1rem,4.2vw,3.6rem)] leading-[0.9] font-medium tracking-[-0.05em]">
-                        {service.name}
-                      </h3>
-                      <p className="max-w-sm text-sm leading-relaxed text-stone group-hover:text-paper/75 md:text-base md:pb-1">
-                        {service.detail} {service.time[0].toUpperCase()}
-                        {service.time.slice(1)}.
-                      </p>
-                      <p className="font-display text-[clamp(1.35rem,2.2vw,2rem)] leading-none font-medium tracking-[-0.04em] tabular-nums md:pb-1 md:text-right">
-                        {service.price}
-                      </p>
-                    </article>
-                  </Reveal>
+                <li key={id} className="border-b border-ink/15 py-3.5">
+                  <div className="flex items-baseline justify-between gap-4">
+                    <h2 className="text-[0.95rem] font-medium">{service.name}</h2>
+                    <p className="shrink-0 text-sm tabular-nums text-stone">{service.price}</p>
+                  </div>
+                  <p className="mt-1 text-sm text-stone">
+                    {service.detail} {service.time[0].toUpperCase()}
+                    {service.time.slice(1)}.
+                  </p>
                 </li>
               );
             })}
           </ul>
-        </div>
-      </section>
 
-      <section className="mt-16 bg-signal text-ink md:mt-24" aria-labelledby="booking-title">
-        <div className="mx-auto grid max-w-[86rem] gap-8 px-4 py-14 md:px-8 md:py-20 lg:grid-cols-12 lg:items-end">
-          <h2 id="booking-title" className="text-sm lg:col-span-3">
-            Запись
-          </h2>
-          <Reveal className="lg:col-span-9">
-            <p className="max-w-4xl font-display text-[clamp(2rem,4.6vw,4.15rem)] leading-[0.92] font-medium tracking-[-0.05em]">
-              Напишите или позвоните. Назовите дату и кого снимаем.
+          <div className="mt-8 lg:mt-auto lg:pt-8">
+            <Link href="/quiz" className="text-[0.95rem] underline decoration-ink/30 underline-offset-4 hover:decoration-ink">
+              Подобрать формат
+            </Link>
+            <p className="mt-2 max-w-xs text-sm leading-relaxed text-stone">
+              Четыре вопроса, если не ясно, что бронировать.
             </p>
-            <p className="mt-5 max-w-xl text-base leading-relaxed md:text-lg">
-              Город, дом или площадка. Время подтверждаю в тот же день, фото приходят ссылкой через неделю.
-            </p>
-          </Reveal>
-        </div>
-      </section>
-
-      <section id="contact" className="scroll-mt-20" aria-labelledby="contact-title">
-        <div className="mx-auto max-w-[86rem] px-4 py-16 md:px-8 md:py-24">
-          <Reveal>
-            <h2 id="contact-title" className="text-sm text-stone">
-              Контакт
-            </h2>
-            <a
-              href={sample.phoneHref}
-              className="mt-3 block font-display text-[clamp(2.6rem,7vw,6.2rem)] leading-[0.86] font-medium tracking-[-0.06em] tabular-nums hover:text-stone"
-            >
+            <a href={sample.phoneHref} className="mt-6 block text-[0.95rem] tabular-nums hover:text-stone">
               {sample.phone}
             </a>
-            <a
-              href={sample.emailHref}
-              className="mt-6 inline-block text-xl tracking-[-0.03em] underline decoration-2 underline-offset-4 hover:text-stone md:text-3xl"
-            >
+            <a href={sample.emailHref} className="mt-1 block text-sm text-stone hover:text-ink">
               {sample.email}
             </a>
-            <p className="mt-5 text-sm text-stone">{sample.city}</p>
-          </Reveal>
+          </div>
+        </aside>
+
+        <div className="flex flex-col gap-14 py-8 md:gap-20 lg:py-8">
+          {frames.map((frame, index) => (
+            <Reveal key={frame.src} immediate={index === 0} delay={index === 0 ? 0.05 : 0}>
+              <figure className={frame.width}>
+                <div className={`relative overflow-hidden ${frame.aspect}`}>
+                  <Image
+                    src={frame.src}
+                    alt={frame.alt}
+                    fill
+                    priority={frame.priority}
+                    sizes="(min-width: 1024px) 62vw, 100vw"
+                    className={`object-cover transition-transform duration-700 ease-out motion-reduce:transition-none motion-reduce:hover:scale-100 hover:scale-[1.03] ${frame.position}`}
+                  />
+                </div>
+                <figcaption className="mt-3 flex items-baseline justify-between gap-4 text-sm">
+                  <span>{frame.caption}</span>
+                  <span className="text-stone">{frame.note}</span>
+                </figcaption>
+              </figure>
+            </Reveal>
+          ))}
         </div>
-      </section>
+      </div>
     </main>
   );
 }
