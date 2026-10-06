@@ -59,10 +59,10 @@ export default function HomePage() {
         </div>
         <Reveal immediate shift={false} className="lg:col-span-8">
           <Shot
-            src="/work/portrait.jpg"
-            alt="Портрет женщины в белой рубашке, мягкий свет, взгляд в камеру"
+            src="/work/hero-portrait.jpg"
+            alt="Женщина в белой рубашке стоит у окна, дневной свет сбоку"
             className="h-[78vh] min-h-[28rem] lg:h-full lg:min-h-svh"
-            position="object-[center_22%]"
+            position="object-[center_40%]"
             priority
             sizes="(min-width: 1024px) 66vw, 100vw"
           />
