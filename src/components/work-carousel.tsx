@@ -13,12 +13,12 @@ function sentence(detail: string, time: string) {
 
 const slides = [
   {
-    src: "/work/portrait.jpg",
-    alt: "Портрет женщины в белой рубашке, мягкий свет, взгляд в камеру",
+    src: "/work/plate-portrait.jpg",
+    alt: "Женщина в белой рубашке сидит на ступенях, дневной свет",
     label: "Портрет",
     detail: sentence(services.portrait.detail, services.portrait.time),
     price: services.portrait.price,
-    position: "object-[center_22%]",
+    position: "object-[center_18%]",
   },
   {
     src: "/work/plate-family.jpg",
@@ -138,34 +138,24 @@ export function WorkCarousel() {
         onPointerUp={onPointerUp}
         onPointerCancel={() => setDragX(null)}
       >
-        {reduce ? (
-          <Image
-            src={slide.src}
-            alt={slide.alt}
-            fill
-            sizes="(min-width: 1024px) 66vw, 100vw"
-            className={`object-cover ${slide.position}`}
-          />
-        ) : (
-          <AnimatePresence initial={false}>
-            <motion.div
-              key={slide.src}
-              className="absolute inset-0"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.55, ease }}
-            >
-              <Image
-                src={slide.src}
-                alt={slide.alt}
-                fill
-                sizes="(min-width: 1024px) 66vw, 100vw"
-                className={`object-cover ${slide.position}`}
-              />
-            </motion.div>
-          </AnimatePresence>
-        )}
+        {slides.map((item, itemIndex) => {
+          const active = itemIndex === index;
+          return (
+            <Image
+              key={item.src}
+              src={item.src}
+              alt={active ? item.alt : ""}
+              fill
+              sizes="(min-width: 1024px) 66vw, 100vw"
+              quality={70}
+              loading="eager"
+              aria-hidden={!active}
+              className={`pointer-events-none object-cover motion-reduce:transition-none ${item.position} ${
+                reduce ? "" : "transition-opacity duration-500 ease-out"
+              } ${active ? "opacity-100" : "opacity-0"}`}
+            />
+          );
+        })}
       </div>
     </section>
   );
